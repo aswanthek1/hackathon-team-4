@@ -10,4 +10,8 @@ class ImageModel extends ChangeNotifier {
     _images.add(image);
     notifyListeners();
   }
+  void removeImage(XFile image) {
+    _images.remove(image);
+    notifyListeners();
+  }
 }

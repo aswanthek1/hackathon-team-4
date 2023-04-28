@@ -28,16 +28,33 @@ class MyHome extends StatelessWidget {
             children: <Widget>[
               ...imageModel.images.map(
                 (image) => Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.file(
-                        File(image.path),
-                        fit: BoxFit.contain,
-                        height: MediaQuery.of(context).size.height * 0.15,
-                      ),
-                    ],
+                  margin: EdgeInsets.only(bottom: 5.0),
+                  child: Align(
+                    child: Stack(
+                      children:[
+                        Image.file(
+                          File(image.path),
+                          fit: BoxFit.cover,
+                          height: MediaQuery.of(context).size.height * 1,
+                          width: 90,
+                        ),
+                        Positioned(
+                          right: -1,
+                          top: -1,
+                          child: GestureDetector(
+                          onTap: () {
+                            imageModel.removeImage(image);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 228, 95, 86),
+                              shape: BoxShape.circle 
+                            ),
+                            child: Icon(Icons.clear,color: Colors.white),
+                          ),
+                        ))
+                      ]
+                    ),
                   ),
                 ),
               )
