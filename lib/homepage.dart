@@ -35,18 +35,17 @@ class MyHome extends StatelessWidget {
     Function clearImages,
     Function toggleUploading,
   ) async {
-    // if (images.isEmpty) return;
+    if (images.isEmpty) return;
     toggleUploading();
     try {
       final url = Uri.parse("https://hackathon-flutter.onrender.com/images");
       final request = http.MultipartRequest('POST', url);
-      // for (final image in images) {
-      //   final multipartFile = http.MultipartFile.fromBytes(
-      //       'files', await image.readAsBytes(),
-      //       filename: image.name);
-      //   request.files.add(multipartFile);
-      // }
-
+      for (final image in images) {
+        final multipartFile = http.MultipartFile.fromBytes(
+            'files', await image.readAsBytes(),
+            filename: image.name);
+        request.files.add(multipartFile);
+      }
       final response = await request.send();
 
       if (response.statusCode == 200) {
@@ -71,19 +70,18 @@ class MyHome extends StatelessWidget {
     openImages() async {
       try {
         var pickedfiles = await imgpicker.pickMultiImage();
-      if(pickedfiles != null) {
-        for(var i=0; i<pickedfiles.length; i++){
-          imageModel.addGalleryImage(pickedfiles[i]);
+        if (pickedfiles != null) {
+          for (var i = 0; i < pickedfiles.length; i++) {
+            imageModel.addImage(pickedfiles[i]);
+          }
+        } else {
+          print("no image selected");
         }
-      }
-      else {
-        print("no image selected");
-      }
       } catch (e) {
         print("error while picking file. $e");
       }
-
     }
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -198,26 +196,14 @@ class MyHome extends StatelessWidget {
                 child: const Icon(Icons.camera, color: Colors.white),
               ),
               FloatingActionButton(
-        onPressed: () async {
-          await availableCameras().then(
-            (value) => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MyCamera(cameras: value, context: context),
+                onPressed: openImages,
+                backgroundColor: Colors.black,
+                child: const Icon(Icons.image, color: Colors.white),
               ),
-            ),
-          );
-        },
-        backgroundColor: Colors.black,
-        child: const Icon(Icons.camera, color: Colors.white),
-        ),
             ],
           ),
         ),
       ),
-        ],
-      ),
-      )
     );
   }
 }
