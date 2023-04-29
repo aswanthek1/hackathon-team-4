@@ -5,12 +5,33 @@ import 'dart:io';
 
 import "./my_camera.dart";
 import './global_state.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MyHome extends StatelessWidget {
   const MyHome({super.key});
   @override
   Widget build(BuildContext context) {
     var imageModel = Provider.of<ImageModel>(context);
+    final ImagePicker imgpicker = ImagePicker();
+
+    openImages() async {
+      try {
+        var pickedfiles = await imgpicker.pickMultiImage();
+      if(pickedfiles != null) {
+        for(var i=0; i<pickedfiles.length; i++){
+          imageModel.addGalleryImage(pickedfiles[i]);
+        }
+      }
+      else {
+        print("no image selected");
+      }
+      } catch (e) {
+        print("error while picking file. $e");
+      }
+
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("FotoThat"),
@@ -60,7 +81,22 @@ class MyHome extends StatelessWidget {
               )
             ],
           )),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: 
+      Padding(padding: EdgeInsets.only(left: 30),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          //for gallery
+          FloatingActionButton(
+        onPressed: ()  {
+          openImages();
+        },
+        backgroundColor: Colors.black,
+        child: const Icon(Icons.image, color: Colors.white),
+      ),
+      Expanded(child: Container()),
+      //for camera
+      FloatingActionButton(
         onPressed: () async {
           await availableCameras().then(
             (value) => Navigator.push(
@@ -74,6 +110,9 @@ class MyHome extends StatelessWidget {
         backgroundColor: Colors.black,
         child: const Icon(Icons.camera, color: Colors.white),
       ),
+        ],
+      ),
+      )
     );
   }
 }
