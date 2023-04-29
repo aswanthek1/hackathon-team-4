@@ -62,6 +62,34 @@ class MyHome extends StatelessWidget {
     }
   }
 
+  void showConfirmDialog(
+      BuildContext context, images, resetImages, toggleUploading) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Upload Images to AWS?",
+        ),
+        content: const Text(
+          "Are you sure you want to upload all images picked from gallery and camera to uploaded to AWS?",
+        ),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text("Okay"),
+            onPressed: () {
+              Navigator.of(context).pop();
+              uploadImages(context, images, resetImages, toggleUploading);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var imageModel = Provider.of<ImageModel>(context);
@@ -156,52 +184,69 @@ class MyHome extends StatelessWidget {
           ),
           const Content()
         ]),
-        floatingActionButton: Container(
-          margin: const EdgeInsets.only(left: 35),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              FloatingActionButton(
-                onPressed: () => uploadImages(
-                  context,
-                  imageModel.images,
-                  imageModel.resetImages,
-                  imageModel.toggleUploading,
-                ),
-                backgroundColor: Colors.black,
-                child: imageModel.isUploading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.white,
-                          strokeWidth: 3,
+        floatingActionButton: Builder(
+          builder: (context) {
+            final int tabIndex = DefaultTabController.of(context).index;
+            if (tabIndex == 1) {
+              return const SizedBox(
+                height: 0,
+                width: 0,
+              );
+            }
+            return Container(
+              margin: const EdgeInsets.only(left: 35),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FloatingActionButton(
+                    heroTag: "upload",
+                    onPressed: () {
+                      if (imageModel.images.isEmpty) return;
+                      showConfirmDialog(
+                        context,
+                        imageModel.images,
+                        imageModel.resetImages,
+                        imageModel.toggleUploading,
+                      );
+                    },
+                    backgroundColor: Colors.black,
+                    child: imageModel.isUploading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              backgroundColor: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : const Icon(Icons.cloud, color: Colors.white),
+                  ),
+                  FloatingActionButton(
+                    heroTag: "camera",
+                    onPressed: () async {
+                      await availableCameras().then(
+                        (value) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                MyCamera(cameras: value, context: context),
+                          ),
                         ),
-                      )
-                    : const Icon(Icons.cloud, color: Colors.white),
+                      );
+                    },
+                    backgroundColor: Colors.black,
+                    child: const Icon(Icons.camera, color: Colors.white),
+                  ),
+                  FloatingActionButton(
+                    heroTag: "picker",
+                    onPressed: openImages,
+                    backgroundColor: Colors.black,
+                    child: const Icon(Icons.image, color: Colors.white),
+                  ),
+                ],
               ),
-              FloatingActionButton(
-                onPressed: () async {
-                  await availableCameras().then(
-                    (value) => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            MyCamera(cameras: value, context: context),
-                      ),
-                    ),
-                  );
-                },
-                backgroundColor: Colors.black,
-                child: const Icon(Icons.camera, color: Colors.white),
-              ),
-              FloatingActionButton(
-                onPressed: openImages,
-                backgroundColor: Colors.black,
-                child: const Icon(Icons.image, color: Colors.white),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

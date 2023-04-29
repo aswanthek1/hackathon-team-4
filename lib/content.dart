@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:photo_view/photo_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -74,7 +76,12 @@ class _ContentState extends State<Content> {
               )
             : GridView.count(
                 primary: false,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  bottom: 120,
+                  right: 20,
+                  left: 20,
+                ),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 crossAxisCount: 2,
@@ -83,31 +90,78 @@ class _ContentState extends State<Content> {
                     (image) => Container(
                       margin: const EdgeInsets.only(bottom: 5.0),
                       child: Align(
-                        child: Stack(children: [
-                          Image.network(
-                            image["url"],
-                            fit: BoxFit.cover,
-                            height: MediaQuery.of(context).size.height * 1,
-                            width: 120,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) {
-                                return child;
-                              }
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.black,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? (loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!)
-                                      : null,
-                                ),
-                              );
-                            },
-                          )
-                        ]),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return Stack(
+                                    children: [
+                                      PhotoView(
+                                        minScale:
+                                            PhotoViewComputedScale.contained,
+                                        imageProvider:
+                                            NetworkImage(image['url']),
+                                      ),
+                                      Positioned(
+                                        top: 70,
+                                        left: 40,
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white),
+                                          width: 35,
+                                          height: 35,
+                                          child: Center(
+                                            child: GestureDetector(
+                                              child: const Icon(
+                                                  Icons.arrow_back,
+                                                  color: Colors.black),
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                image["url"],
+                                fit: BoxFit.cover,
+                                height: MediaQuery.of(context).size.height * 1,
+                                width: 120,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.black,
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? (loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!)
+                                              : null,
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
