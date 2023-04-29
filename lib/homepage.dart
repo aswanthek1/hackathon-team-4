@@ -184,69 +184,58 @@ class MyHome extends StatelessWidget {
           ),
           const Content()
         ]),
-        floatingActionButton: Builder(
-          builder: (context) {
-            final int tabIndex = DefaultTabController.of(context).index;
-            if (tabIndex == 1) {
-              return const SizedBox(
-                height: 0,
-                width: 0,
-              );
-            }
-            return Container(
-              margin: const EdgeInsets.only(left: 35),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FloatingActionButton(
-                    heroTag: "upload",
-                    onPressed: () {
-                      if (imageModel.images.isEmpty) return;
-                      showConfirmDialog(
-                        context,
-                        imageModel.images,
-                        imageModel.resetImages,
-                        imageModel.toggleUploading,
-                      );
-                    },
-                    backgroundColor: Colors.black,
-                    child: imageModel.isUploading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              backgroundColor: Colors.white,
-                              strokeWidth: 3,
-                            ),
-                          )
-                        : const Icon(Icons.cloud, color: Colors.white),
-                  ),
-                  FloatingActionButton(
-                    heroTag: "camera",
-                    onPressed: () async {
-                      await availableCameras().then(
-                        (value) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                MyCamera(cameras: value, context: context),
-                          ),
+        floatingActionButton: Container(
+          margin: const EdgeInsets.only(left: 35),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              FloatingActionButton(
+                heroTag: "upload",
+                onPressed: () {
+                  if (imageModel.images.isEmpty) return;
+                  showConfirmDialog(
+                    context,
+                    imageModel.images,
+                    imageModel.resetImages,
+                    imageModel.toggleUploading,
+                  );
+                },
+                backgroundColor: Colors.black,
+                child: imageModel.isUploading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          strokeWidth: 3,
                         ),
-                      );
-                    },
-                    backgroundColor: Colors.black,
-                    child: const Icon(Icons.camera, color: Colors.white),
-                  ),
-                  FloatingActionButton(
-                    heroTag: "picker",
-                    onPressed: openImages,
-                    backgroundColor: Colors.black,
-                    child: const Icon(Icons.image, color: Colors.white),
-                  ),
-                ],
+                      )
+                    : const Icon(Icons.cloud, color: Colors.white),
               ),
-            );
-          },
+              FloatingActionButton(
+                heroTag: "camera",
+                onPressed: () async {
+                  await availableCameras().then(
+                    (value) => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            MyCamera(cameras: value, context: context),
+                      ),
+                    ),
+                  );
+                },
+                backgroundColor: Colors.black,
+                child: const Icon(Icons.camera, color: Colors.white),
+              ),
+              FloatingActionButton(
+                heroTag: "picker",
+                onPressed: openImages,
+                backgroundColor: Colors.black,
+                child: const Icon(Icons.image, color: Colors.white),
+              ),
+            ],
+          ),
         ),
       ),
     );
