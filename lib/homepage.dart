@@ -28,7 +28,7 @@ class MyHome extends StatelessWidget {
             children: <Widget>[
               ...imageModel.images.map(
                 (image) => Container(
-                  margin: EdgeInsets.only(bottom: 5.0),
+                  margin: const EdgeInsets.only(bottom: 5.0),
                   child: Align(
                     child: Stack(
                       children:[
@@ -36,7 +36,7 @@ class MyHome extends StatelessWidget {
                           File(image.path),
                           fit: BoxFit.cover,
                           height: MediaQuery.of(context).size.height * 1,
-                          width: 90,
+                          width: 120,
                         ),
                         Positioned(
                           right: -1,
@@ -46,11 +46,11 @@ class MyHome extends StatelessWidget {
                             imageModel.removeImage(image);
                           },
                           child: Container(
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 228, 95, 86),
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
                               shape: BoxShape.circle 
                             ),
-                            child: Icon(Icons.clear,color: Colors.white),
+                            child: const Icon(Icons.clear,color: Colors.white),
                           ),
                         ))
                       ]
